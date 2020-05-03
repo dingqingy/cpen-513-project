@@ -53,6 +53,10 @@ MapSpace* ParseAndConstruct(config::CompoundConfigNode config,
   {
     mapspace = new Uber(config, arch_constraints, arch_specs, workload);
   }
+  else if (mapspace_template == "didi")
+  {
+    mapspace = new Didi(config, arch_constraints, arch_specs, workload);
+  }
   else
   {
     std::cerr << "ERROR: unsupported mapspace template: " << mapspace_template << std::endl;

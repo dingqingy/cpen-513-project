@@ -3,6 +3,10 @@
 #include <iterator>
 #include <mutex>
 #include <regex>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include <cmath>
 
 #include "util/numeric.hpp"
 #include "util/misc.hpp"
@@ -20,23 +24,27 @@ namespace mapspace
 //                Didi MapSpace               //
 //--------------------------------------------//
 
-struct Primitive
-{
-	std::string name;
-	unsigned val;
+// struct Primitive
+// {
+// 	problem::Shape::DimensionID id;
+//   std::string name;
+// 	unsigned val;
 
-	void Print() const
-	{
-		std::cout <<name<<val<<" ";
-	}
-};
+// 	void Print() const
+// 	{
+// 		std::cout <<name<<val<<" ";
+// 	}
+// };
+
+typedef std::pair<problem::Shape::DimensionID,unsigned> Primitive;
 
 
 class Didi : public MapSpace
 {
  protected:
   uint128_t timestamp_;
- 	std::vector<Primitive> primitive_list;
+ 	std::vector<Primitive> primitive_list_;
+  std::vector<Primitive> proposed_; // we evaluate on proposed, update if we take the swap
 
  	// split is disabled given the scope of the project
  	std::vector<Didi*> splits_; // always have size 1
@@ -80,10 +88,21 @@ class Didi : public MapSpace
     timestamp_=0;
 
     // Sanity check
-    for(int i = 0; i < primitive_list.size(); i++)
+    std::cout<< "Checking Init Primitive list"<<std::endl;
+    for(int i = 0; i < primitive_list_.size(); i++)
     {
-    	primitive_list[i].Print()
+    	// primitive_list_[i].Print()
+      std::cout << problem::GetShape()->DimensionIDToName.at(primitive_list_[i].first) << primitive_list_[i].second << " " << std::endl;
     }
+    std::cout << std::endl;
+
+    std::cout<< "Checking Init Proposed Primitive list"<<std::endl;
+    for(int i = 0; i < proposed_.size(); i++)
+    {
+      // proposed_[i].Print()
+      std::cout << problem::GetShape()->DimensionIDToName.at(proposed_[i].first) << proposed_[i].second << " " << std::endl;
+    }
+    std::cout << std::endl;
   }
 
   void InitPrimitivePairs()
@@ -97,6 +116,35 @@ class Didi : public MapSpace
 
     // TODO: based on the workload, produce primitive_list in an arbitrary order
     // TODO: we can fix spatial level to reduce the complexity
+
+    primitive_list_.clear();
+    for (unsigned idim = 0; idim < unsigned(problem::GetShape()->NumDimensions); idim++) // idim for dim id
+    {
+      auto bound = workload_.GetBound(idim);
+      while (bound % 2 == 0)  
+      {  
+        primitive_list_.push_back(std::make_pair(idim, 2));
+        bound /= 2;  
+      }
+
+      for (int i = 3; i <= std::sqrt(bound); i += 2)  
+      {  
+        while (bound % i == 0)  
+        {  
+          primitive_list_.push_back(std::make_pair(idim, i));
+          bound = bound/i;  
+        }  
+      }
+
+      if(bound>2)
+      {
+        primitive_list_.push_back(std::make_pair(idim, bound));
+      }
+
+      std::shuffle(std::begin(primitive_list_), std::end(primitive_list_), std::default_random_engine());
+
+      proposed_ = primitive_list_;
+    }
   }
 
   Didi(const Didi& other) = default;
@@ -157,7 +205,7 @@ class Didi : public MapSpace
     InitSubnests(subnests); 
 
     // === Stage 1 ===
-    PermuteSubnests(subnests); // reorder based on primitive list
+    PermuteSubnests(subnests); // reorder based on proposed primitive list
 
     // === Stage 2 ===
     AssignIndexFactors(subnests); // merge primitive with the same name
@@ -215,7 +263,7 @@ class Didi : public MapSpace
     // mapping->id = mapping_id.Integer();
     // TODO: figure out timestamp increase, should happen in search or here?
     mapspace->id = timestamp_;
-    
+    timestamp_++;
     return true;
   }
 

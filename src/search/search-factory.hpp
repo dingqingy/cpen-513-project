@@ -72,6 +72,10 @@ SearchAlgorithm* ParseAndConstruct(config::CompoundConfigNode config,
   {
     search = new RandomPrunedSearch(config, mapspace, id);
   }
+  else if (search_alg == "simulated-annealing")
+  {
+    search = new SimulatedAnnealing(config, mapspace);
+  }
   else
   {
     std::cerr << "ERROR: unsupported search algorithm: " << search_alg << std::endl;

@@ -46,10 +46,6 @@ class Didi : public MapSpace
  	std::vector<Primitive> primitive_list_;
   std::vector<Primitive> proposed_; // we evaluate on proposed, update if we take the swap
 
-  // random nunber stuff
-  std::random_device rd_;  //Will be used to obtain a seed for the random number engine
-  std::mt19937 rng_;
-
  	// split is disabled given the scope of the project
  	std::vector<Didi*> splits_; // always have size 1
 
@@ -59,6 +55,10 @@ class Didi : public MapSpace
   // Constraints.
   mapping::Constraints constraints_;
 
+  // random nunber stuff
+  std::random_device rd_;  //Will be used to obtain a seed for the random number engine
+  std::mt19937 rng_;
+
  public:
   Didi(
     config::CompoundConfigNode config,
@@ -67,9 +67,9 @@ class Didi : public MapSpace
     const problem::Workload& workload,
     bool skip_init = false) :
       MapSpace(arch_specs, workload),
-      rng_(rd_()),
       arch_props_(arch_specs),
-      constraints_(arch_props_, workload)
+      constraints_(arch_props_, workload),
+      rng_(rd_()),
   {
     if (!skip_init)
     {

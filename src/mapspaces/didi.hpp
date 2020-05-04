@@ -46,6 +46,10 @@ class Didi : public MapSpace
  	std::vector<Primitive> primitive_list_;
   std::vector<Primitive> proposed_; // we evaluate on proposed, update if we take the swap
 
+  // random nunber stuff
+  std::random_device rd_;  //Will be used to obtain a seed for the random number engine
+  std::mt19937 rng_;
+
  	// split is disabled given the scope of the project
  	std::vector<Didi*> splits_; // always have size 1
 
@@ -63,6 +67,7 @@ class Didi : public MapSpace
     const problem::Workload& workload,
     bool skip_init = false) :
       MapSpace(arch_specs, workload),
+      rng_(rd_()),
       arch_props_(arch_specs),
       constraints_(arch_props_, workload)
   {
@@ -158,7 +163,7 @@ class Didi : public MapSpace
       primitive_list_.push_back(std::make_pair(problem::GetShape()->NumDimensions, 0)); // level seperator
     }    
 
-    std::shuffle(std::begin(primitive_list_), std::end(primitive_list_), std::default_random_engine());
+    std::shuffle(std::begin(primitive_list_), std::end(primitive_list_), rng_);
 
     std::cout <<"primitive_list_ size: "<<primitive_list_.size()<<std::endl;
 

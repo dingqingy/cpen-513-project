@@ -146,7 +146,7 @@ class Didi : public MapSpace
     // Done: add special premitives such as level seperators    
     for (unsigned i = 0; i<arch_props_.TilingLevels()-1;i++)
     {
-      primitive_list_.push_back(std::make_pair(problem::GetShape()->NumDimensions, 0)) // level seperator
+      primitive_list_.push_back(std::make_pair(problem::GetShape()->NumDimensions, 0)); // level seperator
     }    
 
     std::shuffle(std::begin(primitive_list_), std::end(primitive_list_), std::default_random_engine());

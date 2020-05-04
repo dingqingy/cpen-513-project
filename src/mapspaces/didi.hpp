@@ -330,7 +330,7 @@ class Didi : public MapSpace
       {
         if(primitive_counts[idim]>0)
         {
-          arbitrator.push_back(std::make_pair(primitive_relative_pos[idim]/primitive_counts[idim], idim))
+          arbitrator.push_back(std::make_pair(primitive_relative_pos[idim]/primitive_counts[idim], idim));
         }
       }
 

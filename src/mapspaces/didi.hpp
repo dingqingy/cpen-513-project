@@ -89,7 +89,7 @@ class Didi : public MapSpace
 
     // Sanity check
     std::cout<< "Checking Init Primitive list"<<std::endl;
-    for(int i = 0; i < primitive_list_.size(); i++)
+    for(unsigned i = 0; i < primitive_list_.size(); i++)
     {
     	// primitive_list_[i].Print()
       std::cout << problem::GetShape()->DimensionIDToName.at(primitive_list_[i].first) << primitive_list_[i].second << " " << std::endl;
@@ -97,7 +97,7 @@ class Didi : public MapSpace
     std::cout << std::endl;
 
     std::cout<< "Checking Init Proposed Primitive list"<<std::endl;
-    for(int i = 0; i < proposed_.size(); i++)
+    for(unsigned i = 0; i < proposed_.size(); i++)
     {
       // proposed_[i].Print()
       std::cout << problem::GetShape()->DimensionIDToName.at(proposed_[i].first) << proposed_[i].second << " " << std::endl;
@@ -284,8 +284,8 @@ class Didi : public MapSpace
   //
   void PrimitiveToSubNest(loop::NestConfig& subnests)
   {
-    int start = 0;
-    int end = 0;
+    unsigned start = 0;
+    unsigned end = 0;
     std::vector<unsigned> merged_bounds;
     std::vector<unsigned> primitive_counts;
     std::vector<double> primitive_relative_pos; // sum
@@ -340,7 +340,7 @@ class Didi : public MapSpace
       if(!arbitrator.empty())
         std::sort(arbitrator.begin(), arbitrator.end());
 
-      for(int i = 0; i < arbitrator.size(); i++)
+      for(unsigned i = 0; i < arbitrator.size(); i++)
       {
         auto spacetime_dim = arch_props_.IsSpatial(level)
           ? spacetime::Dimension::SpaceX // Placeholder.

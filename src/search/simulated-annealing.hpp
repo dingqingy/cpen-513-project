@@ -67,10 +67,10 @@ class SimulatedAnnealing : public SearchAlgorithm
     (void) config;
     // TODO: get temp_, max_iter_, early_stop_iter_, cooling_iter_, beta_ (optionally)
     // from config
-    temp_ = 1000;
+    temp_ = 100000;
     max_iter_ = 1000000;
     // early_stop_iter_ = 10000;
-    cooling_iter_ = 10;
+    cooling_iter_ = 1000;
     beta_ = 0.9;
 
     //

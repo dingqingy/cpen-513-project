@@ -76,7 +76,7 @@ mapper:
   search-size: 0
   # sync_interval: 100
   num-threads: 1 
-  victory-condition: 100000 # 100
+  victory-condition: 10000 # 100
   timeout: 5000000
 problem:
   shape: cnn-layer

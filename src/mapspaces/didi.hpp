@@ -141,14 +141,19 @@ class Didi : public MapSpace
       {
         primitive_list_.push_back(std::make_pair(idim, bound));
       }
-
-      std::shuffle(std::begin(primitive_list_), std::end(primitive_list_), std::default_random_engine());
-
-      // TODO: add special premitives such as level seperators
-      // TODO: infer spatial primitives implicitly based on level seperator and IsSpatial(level)
-
-      proposed_ = primitive_list_;
     }
+
+    // Done: add special premitives such as level seperators    
+    for (int i = 0; i<arch_props_.TilingLevels()-1;i++)
+    {
+      primitive_list_.push_back(std::make_pair(problem::Shape::NumDimensions, 0)) // level seperator
+    }    
+
+    std::shuffle(std::begin(primitive_list_), std::end(primitive_list_), std::default_random_engine());
+
+    // TODO: infer spatial primitives implicitly based on level seperator and IsSpatial(level)
+
+    proposed_ = primitive_list_;
   }
 
   Didi(const Didi& other) = default;
@@ -205,14 +210,15 @@ class Didi : public MapSpace
     loop::NestConfig subnests(arch_props_.TilingLevels());
 
     // Note in all stage subnests modified inplace
-    // === Stage 0 ===
-    InitSubnests(subnests); 
+    // // === Stage 0 ===
+    // InitSubnests(subnests); 
 
-    // === Stage 1 ===
-    PermuteSubnests(subnests); // reorder based on proposed primitive list
+    // // === Stage 1 ===
+    // PermuteSubnests(subnests); // reorder based on proposed primitive list
 
-    // === Stage 2 ===
-    AssignIndexFactors(subnests); // merge primitive with the same name
+    // // === Stage 2 ===
+    // AssignIndexFactors(subnests); // merge primitive with the same name
+    PrimitiveToSubNest(subnests);
 
     // === Stage 4 ===
     mapping->datatype_bypass_nest = ConstructDatatypeBypassNest(); // simplify this with assuming no bypass
@@ -274,6 +280,97 @@ class Didi : public MapSpace
 
   //
   // Mapping Construction
+  // corresponds to Uber Stage 0-2
+  //
+  void PrimitiveToSubNest(loop::NestConfig& subnests)
+  {
+    int start = 0;
+    int end = 0;
+    std::vector<unsigned> merged_bounds;
+    std::vector<unsigned> primitive_counts;
+    std::vector<double> primitive_relative_pos; // sum
+    // std::vector<std::pair<unsigned, unsigned>> order_arbitrator; // track primitive appearance count and sum of the relative position to start
+    // for (int)
+
+    for (uint64_t level = 0; level < arch_props_.TilingLevels(); level++)
+    {
+      // identify position of level seperator
+      while(end < proposed_.size() || IsLevelSeperator(proposed_[end]))
+      {
+        end++;
+      }
+
+      // init auxiliary structure
+      merged_bounds.clear();
+      merged_bounds.resize(problem::Shape::NumDimensions, 1);
+
+      primitive_counts.clear();
+      primitive_counts.resize(problem::Shape::NumDimensions, 0);
+
+      primitive_relative_pos.clear();
+      primitive_relative_pos.resize(problem::Shape::NumDimensions, 0);
+
+      // order_arbitrator.clear();
+      // for (i = 0; i < problem::Shape::NumDimensions;i++)
+      //   order_arbitrator.push_back(std::make_pair(0, 0));
+
+      // merge primitives and determine the order
+      for(int i = start; i<end; ++i)
+      {
+        dim = proposed_.at(i).first;
+        val = proposed_.at(i).second;
+
+        merged_bounds.at(dim) *= val;
+        primitive_counts.at(dim) += 1;
+        primitive_relative_pos += i - start;
+        // order_arbitrator.at(dim).first++;
+        // order_arbitrator.at(dim).second += i-start;
+      }
+
+      std::vector<std::pair<double, problem::Shape::DimensionID>> arbitrator; // arbitrator has relative order and dimID
+      arbitrator.clear();
+      for (int idim = 0; idim < int(problem::GetShape()->NumDimensions); idim++)
+      {
+        if(primitive_counts[idim]>0)
+        {
+          arbitrator.push_back(std::make_pair(primitive_relative_pos[idim]/primitive_counts[idim], idim))
+        }
+      }
+
+      if(!arbitrator.empty())
+        std::sort(arbitrator.begin(), arbitrator.end());
+
+      for(int i = 0; i < arbitrator.size(); i++)
+      {
+        auto spacetime_dim = arch_props_.IsSpatial(level)
+          ? spacetime::Dimension::SpaceX // Placeholder.
+          : spacetime::Dimension::Time;
+        
+        
+        auto dim = arbitrator[i].second;
+        loop::Descriptor loop;
+        loop.dimension = problem::Shape::DimensionID(dim);
+        loop.start = 0;
+        loop.end = merged_bounds[dim];
+        loop.stride = 1;                           // FIXME.
+        loop.spacetime_dimension = spacetime_dim;
+        
+        subnests.at(level).push_back(loop);
+      }
+
+      start = end + 1;
+    }
+    // TODO: missing handling for spatial level and no allocated temporal dim
+    // TODO: check how is tiling boundary expressed
+  }
+
+  bool IsLevelSeperator(Primitive p) const
+  {
+    return (p.first == problem::Shape::NumDimensions) && (p.second == 0)
+  }
+/*
+  //
+  // Mapping Construction
   // Stage 0: Initialize subnests.
   //
   void InitSubnests(loop::NestConfig& subnests)
@@ -326,6 +423,18 @@ class Didi : public MapSpace
       // }
 
       // TODO: perform the swap and legalize the loop order (deduplication)
+            // Each partition has problem::GetShape()->NumDimensions loops.
+      for (int idim = 0; idim < int(problem::GetShape()->NumDimensions); idim++)
+      {
+        loop::Descriptor loop;
+        loop.dimension = problem::Shape::DimensionID(idim); // Placeholder.
+        loop.start = 0;
+        loop.end = 0;                              // Placeholder.
+        loop.stride = 1;                           // FIXME.
+        loop.spacetime_dimension = spacetime_dim;
+        
+        subnests.at(level).push_back(loop);
+      }
     }
 
     subnests = reordered;
@@ -350,7 +459,7 @@ class Didi : public MapSpace
       // TODO: merge assigned index
     }
   }
-
+*/
   // validate spatial fanout
   // TODO: get spatial primitive to work properly
 /*

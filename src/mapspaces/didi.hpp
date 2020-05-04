@@ -314,8 +314,8 @@ class Didi : public MapSpace
       // merge primitives and determine the order
       for(unsigned i = start; i<end; ++i)
       {
-        dim = proposed_.at(i).first;
-        val = proposed_.at(i).second;
+        auto dim = proposed_.at(i).first;
+        auto val = proposed_.at(i).second;
 
         merged_bounds.at(dim) *= val;
         primitive_counts.at(dim) += 1;
@@ -357,8 +357,8 @@ class Didi : public MapSpace
 
       start = end + 1;
     }
-    // TODO: missing handling for spatial level and no allocated temporal dim
-    // TODO: check how is tiling boundary expressed
+    // Done: missing handling for spatial level and no allocated temporal dim
+    // Done: check how is tiling boundary expressed
   }
 
   bool IsLevelSeperator(Primitive p) const

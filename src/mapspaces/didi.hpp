@@ -507,7 +507,7 @@ class Didi : public MapSpace
       success &= AssignSpatialTilingDirections_Level_Expand(
         // spatial_splits.at(level),
         subnests[level],
-        level)
+        level);
         // cumulative_fanout_utilization);
       
     } // for (level)

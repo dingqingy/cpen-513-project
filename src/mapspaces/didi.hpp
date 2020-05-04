@@ -143,6 +143,8 @@ class Didi : public MapSpace
       }
     }
 
+    std::cout <<"primitive_list_ size: "<<primitive_list_.size()<<std::endl;
+
     // Done: add special premitives such as level seperators    
     for (unsigned i = 0; i<arch_props_.TilingLevels()-1;i++)
     {
@@ -151,9 +153,12 @@ class Didi : public MapSpace
 
     std::shuffle(std::begin(primitive_list_), std::end(primitive_list_), std::default_random_engine());
 
+    std::cout <<"primitive_list_ size: "<<primitive_list_.size()<<std::endl;
+
     // TODO: infer spatial primitives implicitly based on level seperator and IsSpatial(level)
 
     proposed_ = primitive_list_;
+    std::cout <<"proposed_ size: "<<primitive_list_.size()<<std::endl;
   }
 
   Didi(const Didi& other) = default;

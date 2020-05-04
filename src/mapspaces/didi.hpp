@@ -218,7 +218,7 @@ class Didi : public MapSpace
   	// A set of subnests, one for each tiling level.
     loop::NestConfig subnests(arch_props_.TilingLevels());
 
-    std::cout << "Get to Mapspace Construction" << std::endl;
+    // std::cout << "Get to Mapspace Construction" << std::endl;
 
     // Note in all stage subnests modified inplace
     // // === Stage 0 ===
@@ -645,7 +645,54 @@ class Didi : public MapSpace
   {
     // proposal is based on the true representation
     proposed_ = primitive_list_;
+
+    std::cout<< "Checking Primitive list Before Swap: "<<std::endl;
+    for(unsigned i = 0; i < primitive_list_.size(); i++)
+    {
+      // primitive_list_[i].Print()
+      if(primitive_list_[i].first<problem::GetShape()->NumDimensions)
+        std::cout << problem::GetShape()->DimensionIDToName.at(primitive_list_[i].first) << primitive_list_[i].second << " ";
+      else
+        std::cout << "|| ";
+    }
+    std::cout << std::endl;
+
+    std::cout<< "Checking Proposed Primitive list before swap: "<<std::endl;
+    for(unsigned i = 0; i < proposed_.size(); i++)
+    {
+      // proposed_[i].Print()
+      // std::cout << problem::GetShape()->DimensionIDToName.at(proposed_[i].first) << proposed_[i].second << " " << std::endl;
+      if(proposed_[i].first<problem::GetShape()->NumDimensions)
+        std::cout << problem::GetShape()->DimensionIDToName.at(proposed_[i].first) << proposed_[i].second << " ";
+      else
+        std::cout << "|| ";
+    }
+    std::cout << std::endl;
+
     std::swap(proposed_.at(p1), proposed_.at(p2));
+
+    std::cout<< "Checking Primitive list After Swap: "<<std::endl;
+    for(unsigned i = 0; i < primitive_list_.size(); i++)
+    {
+      // primitive_list_[i].Print()
+      if(primitive_list_[i].first<problem::GetShape()->NumDimensions)
+        std::cout << problem::GetShape()->DimensionIDToName.at(primitive_list_[i].first) << primitive_list_[i].second << " ";
+      else
+        std::cout << "|| ";
+    }
+    std::cout << std::endl;
+
+    std::cout<< "Checking Proposed Primitive list After swap: "<<std::endl;
+    for(unsigned i = 0; i < proposed_.size(); i++)
+    {
+      // proposed_[i].Print()
+      // std::cout << problem::GetShape()->DimensionIDToName.at(proposed_[i].first) << proposed_[i].second << " " << std::endl;
+      if(proposed_[i].first<problem::GetShape()->NumDimensions)
+        std::cout << problem::GetShape()->DimensionIDToName.at(proposed_[i].first) << proposed_[i].second << " ";
+      else
+        std::cout << "|| ";
+    }
+    std::cout << std::endl;
   }
 
   void AcceptProposal()

@@ -115,7 +115,7 @@ class SimulatedAnnealing : public SearchAlgorithm
 
     state_ = State::WaitingForStatus;
 
-    std::cout << "Get to Next" << std::endl;
+    // std::cout << "Get to Next" << std::endl;
     
     return true;
   }
@@ -126,7 +126,7 @@ class SimulatedAnnealing : public SearchAlgorithm
     
     assert(state_ == State::WaitingForStatus);
 
-    std::cout << "Get to Report" << std::endl;
+    // std::cout << "Get to Report" << std::endl;
 
     // bool skip_datatype_bypass = false;
     if (status == Status::Success)
@@ -154,7 +154,9 @@ class SimulatedAnnealing : public SearchAlgorithm
       if((timestamp_+1) % cooling_iter_ == 0)
       {
         temp_ *= beta_;
-        std::cout << "iter: " << timestamp_ <<" temp: " << temp_ << "best_cost_: "<< best_cost_ <<std::endl;
+        std::cout << "iter: " << timestamp_ <<" temp: " << temp_ 
+          << " previous_cost_: " << previous_cost_
+          << " best_cost_: "<< best_cost_ <<std::endl;
       }
 
       best_cost_ = std::min(best_cost_, cost);

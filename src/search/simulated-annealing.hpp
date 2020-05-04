@@ -114,6 +114,8 @@ class SimulatedAnnealing : public SearchAlgorithm
 
 
     state_ = State::WaitingForStatus;
+
+    std::cout << "Get to Next" << std::endl;
     
     return true;
   }
@@ -123,6 +125,8 @@ class SimulatedAnnealing : public SearchAlgorithm
     (void) cost;
     
     assert(state_ == State::WaitingForStatus);
+
+    std::cout << "Get to Report" << std::endl;
 
     // bool skip_datatype_bypass = false;
     if (status == Status::Success)

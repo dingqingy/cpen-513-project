@@ -93,7 +93,7 @@ class Didi : public MapSpace
     {
     	// primitive_list_[i].Print()
       if(primitive_list_[i].first<problem::GetShape()->NumDimensions)
-        std::cout << problem::GetShape()->DimensionIDToName.at(primitive_list_[i].first) << primitive_list_[i].second << " " << std::endl;
+        std::cout << problem::GetShape()->DimensionIDToName.at(primitive_list_[i].first) << primitive_list_[i].second << " ";
       else
         std::cout << " || " << std::endl;
     }
@@ -105,7 +105,7 @@ class Didi : public MapSpace
       // proposed_[i].Print()
       // std::cout << problem::GetShape()->DimensionIDToName.at(proposed_[i].first) << proposed_[i].second << " " << std::endl;
       if(proposed_[i].first<problem::GetShape()->NumDimensions)
-        std::cout << problem::GetShape()->DimensionIDToName.at(proposed_[i].first) << proposed_[i].second << " " << std::endl;
+        std::cout << problem::GetShape()->DimensionIDToName.at(proposed_[i].first) << proposed_[i].second << " ";
       else
         std::cout << " || " << std::endl;
     }
@@ -217,6 +217,8 @@ class Didi : public MapSpace
 
   	// A set of subnests, one for each tiling level.
     loop::NestConfig subnests(arch_props_.TilingLevels());
+
+    std::cout << "Get to Mapspace Construction" << std::endl;
 
     // Note in all stage subnests modified inplace
     // // === Stage 0 ===

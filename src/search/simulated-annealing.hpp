@@ -55,14 +55,14 @@ class SimulatedAnnealing : public SearchAlgorithm
       SearchAlgorithm(),
       mapspace_(mapspace),
       state_(State::Ready),
+      valid_mappings_(0),
+      eval_fail_count_(0),
       timestamp_(0),
       previous_cost_(std::numeric_limits<double>::max()),
       best_cost_(std::numeric_limits<double>::max()),
       beta_(0.9),
       rng_(rd_()),
-      dis_(std::uniform_real_distribution<>(0.0, 1.0)),
-      valid_mappings_(0),
-      eval_fail_count_(0)
+      dis_(std::uniform_real_distribution<>(0.0, 1.0))
   {
     (void) config;
     // TODO: get temp_, max_iter_, early_stop_iter_, cooling_iter_, beta_ (optionally)

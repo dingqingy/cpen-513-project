@@ -95,7 +95,7 @@ class Didi : public MapSpace
       if(primitive_list_[i].first<problem::GetShape()->NumDimensions)
         std::cout << problem::GetShape()->DimensionIDToName.at(primitive_list_[i].first) << primitive_list_[i].second << " ";
       else
-        std::cout << " || " << std::endl;
+        std::cout << "|| ";
     }
     std::cout << std::endl;
 
@@ -107,7 +107,7 @@ class Didi : public MapSpace
       if(proposed_[i].first<problem::GetShape()->NumDimensions)
         std::cout << problem::GetShape()->DimensionIDToName.at(proposed_[i].first) << proposed_[i].second << " ";
       else
-        std::cout << " || " << std::endl;
+        std::cout << "|| ";
     }
     std::cout << std::endl;
   }
@@ -306,7 +306,7 @@ class Didi : public MapSpace
     for (uint64_t level = 0; level < arch_props_.TilingLevels(); level++)
     {
       // identify position of level seperator
-      while(end < proposed_.size() || IsLevelSeperator(proposed_[end]))
+      while(end < proposed_.size() && !IsLevelSeperator(proposed_[end]))
       {
         end++;
       }

@@ -72,7 +72,7 @@ mapper:
   algorithm: simulated-annealing
   init-temp: 10000
   max-iter: 10000
-  cooling_iter: 100
+  cooling-iter: 100
   beta: 0.8
   # algorithm: random-pruned
   optimization-metrics:

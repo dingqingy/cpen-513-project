@@ -80,9 +80,9 @@ class SimulatedAnnealing : public SearchAlgorithm
     config.lookupValue("beta", beta_);
 
     std::cout<< "Init T: " << temp_
-             << "Max Iter: " << max_iter_
-             << "Cooling Iter: " << cooling_iter_
-             << "Beta: " << beta_ << std::endl;
+             << " Max Iter: " << max_iter_
+             << " Cooling Iter: " << cooling_iter_
+             << " Beta: " << beta_ << std::endl;
 
     //
     perm_.clear();

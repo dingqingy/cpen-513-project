@@ -365,6 +365,23 @@ class Didi : public MapSpace
   {
     return (p.first == problem::GetShape()->NumDimensions) && (p.second == 0)
   }
+
+  //
+  // Mapping Construction
+  // Stage 4: Construct datatype bypass nest. we assume no bypass for simplicity
+  //
+  tiling::CompoundMaskNest ConstructDatatypeBypassNest()
+  {
+    tiling::CompoundMaskNest seed_mask_nest;
+    for (unsigned pvi = 0; pvi < unsigned(problem::GetShape()->NumDataSpaces); pvi++)
+    {
+      for (unsigned level = 0; level < arch_specs_.topology.NumStorageLevels(); level++)
+      {
+        seed_mask_nest.at(pvi).set(level);
+      }
+    }
+    return seed_mask_nest;
+  }
 /*
   //
   // Mapping Construction

@@ -491,7 +491,7 @@ class Didi : public MapSpace
     // auto spatial_splits = spatial_split_space_.GetSplits(mapping_spatial_id);
     //auto datatype_bypass_masks = tiling::TransposeMasks(datatype_bypass_nest);
     
-    double cumulative_fanout_utilization = 1.0;
+    // double cumulative_fanout_utilization = 1.0; // for parallelism constraint, ignored for now
 
     for (uint64_t level = 0; level < arch_props_.TilingLevels() && success; level++)
     {
@@ -507,20 +507,20 @@ class Didi : public MapSpace
       success &= AssignSpatialTilingDirections_Level_Expand(
         // spatial_splits.at(level),
         subnests[level],
-        level,
-        cumulative_fanout_utilization);
+        level)
+        // cumulative_fanout_utilization);
       
     } // for (level)
     
-    // success &= (cumulative_fanout_utilization >= constraints_.MinParallelism()); // ignored for simplicity
+    // success &= (cumulative_fanout_utilization >= constraints_.MinParallelism());
       
     return success;
   }
 
   bool AssignSpatialTilingDirections_Level_Expand(// std::uint32_t spatial_split,
                                                   std::vector<loop::Descriptor>& level_nest,
-                                                  unsigned tiling_level_id,
-                                                  double& fanout_utilization)
+                                                  unsigned tiling_level_id)
+                                                  // double& fanout_utilization)
   {
     // This version of the function assumes that spatial tiling will expand
     // the instances for *each* datatype exactly by the tiling parameters. For

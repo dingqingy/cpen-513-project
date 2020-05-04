@@ -146,7 +146,7 @@ class Didi : public MapSpace
     // Done: add special premitives such as level seperators    
     for (unsigned i = 0; i<arch_props_.TilingLevels()-1;i++)
     {
-      primitive_list_.push_back(std::make_pair(problem::Shape::NumDimensions, 0)) // level seperator
+      primitive_list_.push_back(std::make_pair(problem::GetShape()->NumDimensions, 0)) // level seperator
     }    
 
     std::shuffle(std::begin(primitive_list_), std::end(primitive_list_), std::default_random_engine());
@@ -302,16 +302,16 @@ class Didi : public MapSpace
 
       // init auxiliary structure
       merged_bounds.clear();
-      merged_bounds.resize(problem::Shape::NumDimensions, 1);
+      merged_bounds.resize(problem::GetShape()->NumDimensions, 1);
 
       primitive_counts.clear();
-      primitive_counts.resize(problem::Shape::NumDimensions, 0);
+      primitive_counts.resize(problem::GetShape()->NumDimensions, 0);
 
       primitive_relative_pos.clear();
-      primitive_relative_pos.resize(problem::Shape::NumDimensions, 0);
+      primitive_relative_pos.resize(problem::GetShape()->NumDimensions, 0);
 
       // order_arbitrator.clear();
-      // for (i = 0; i < problem::Shape::NumDimensions;i++)
+      // for (i = 0; i < problem::GetShape()->NumDimensions;i++)
       //   order_arbitrator.push_back(std::make_pair(0, 0));
 
       // merge primitives and determine the order
@@ -366,7 +366,7 @@ class Didi : public MapSpace
 
   bool IsLevelSeperator(Primitive p) const
   {
-    return (p.first == problem::Shape::NumDimensions) && (p.second == 0)
+    return (p.first == problem::GetShape()->NumDimensions) && (p.second == 0)
   }
 /*
   //

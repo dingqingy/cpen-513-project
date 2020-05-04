@@ -319,7 +319,7 @@ class Didi : public MapSpace
 
         merged_bounds.at(dim) *= val;
         primitive_counts.at(dim) += 1;
-        primitive_relative_pos += i - start;
+        primitive_relative_pos.at(dim) += i - start;
         // order_arbitrator.at(dim).first++;
         // order_arbitrator.at(dim).second += i-start;
       }

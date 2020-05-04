@@ -1,5 +1,6 @@
 /build/
 /src/pat
+*.log
 
 # Generated output
 timeloop-output.pkl

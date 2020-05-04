@@ -107,7 +107,7 @@ class SimulatedAnnealing : public SearchAlgorithm
 
     // Done: propose a new swap (not through new mapping ID but through update proposed_ in the Didi mapspace)
     std::shuffle(std::begin(perm_), std::end(perm_), rng_);
-    mapspace_->ProposeToSwap(perm_.at(0), perm.at(1));
+    mapspace_->ProposeToSwap(perm_.at(0), perm_.at(1));
 
     // increase the timestamp similar to update in mapping_id
     timestamp_++;

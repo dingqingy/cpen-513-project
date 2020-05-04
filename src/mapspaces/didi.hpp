@@ -270,7 +270,7 @@ class Didi : public MapSpace
     // mapping->id = mapping_id.Integer();
     // Done: figure out timestamp increase, should happen in search or here?
     // we do it in search, here just use another timestamp_ to distinguish mapping
-    mapspace->id = timestamp_;
+    mapping->id = timestamp_;
     timestamp_++;
     return true;
   }

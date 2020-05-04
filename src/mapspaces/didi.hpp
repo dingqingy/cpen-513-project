@@ -363,7 +363,7 @@ class Didi : public MapSpace
 
   bool IsLevelSeperator(Primitive p) const
   {
-    return (p.first == problem::GetShape()->NumDimensions) && (p.second == 0)
+    return (p.first == problem::GetShape()->NumDimensions) && (p.second == 0);
   }
 
   //

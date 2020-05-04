@@ -242,7 +242,7 @@ class Didi : public MapSpace
     for (uint64_t i = 0; i < arch_props_.TilingLevels(); i++)
     {
       uint64_t num_subnests_added = 0;
-      for (int dim = 0; dim < int(problem::GetShape()->NumDimensions); dim++)
+      for (unsigned dim = 0; dim < subnests[i].size(); dim++) // Note: already pruned on each tile level
       {
         // Ignore trivial factors
         // This reduces computation time by 1.5x on average.
@@ -476,19 +476,19 @@ class Didi : public MapSpace
 */
   // validate spatial fanout
   // TODO: get spatial primitive to work properly
-/*
+
   //
   // Mapping Construction
   // Stage 3: Decide which of the spatial loop nests are along the space_x dimension.
   //
-  bool AssignSpatialTilingDirections(uint128_t mapping_spatial_id,
-                                     loop::NestConfig& subnests,
+  bool AssignSpatialTilingDirections(loop::NestConfig& subnests,
                                      tiling::CompoundMaskNest datatype_bypass_nest)
   {
     (void) datatype_bypass_nest;
     bool success = true;
 
-    auto spatial_splits = spatial_split_space_.GetSplits(mapping_spatial_id);
+    // TODO: implicitly infer split
+    // auto spatial_splits = spatial_split_space_.GetSplits(mapping_spatial_id);
     //auto datatype_bypass_masks = tiling::TransposeMasks(datatype_bypass_nest);
     
     double cumulative_fanout_utilization = 1.0;
@@ -505,19 +505,19 @@ class Didi : public MapSpace
       // auto& datatype_bypass_mask = datatype_bypass_masks.at(storage_level-1);
 
       success &= AssignSpatialTilingDirections_Level_Expand(
-        spatial_splits.at(level),
+        // spatial_splits.at(level),
         subnests[level],
         level,
         cumulative_fanout_utilization);
       
     } // for (level)
     
-    success &= (cumulative_fanout_utilization >= constraints_.MinParallelism());
+    // success &= (cumulative_fanout_utilization >= constraints_.MinParallelism()); // ignored for simplicity
       
     return success;
   }
 
-  bool AssignSpatialTilingDirections_Level_Expand(std::uint32_t spatial_split,
+  bool AssignSpatialTilingDirections_Level_Expand(// std::uint32_t spatial_split,
                                                   std::vector<loop::Descriptor>& level_nest,
                                                   unsigned tiling_level_id,
                                                   double& fanout_utilization)
@@ -544,17 +544,21 @@ class Didi : public MapSpace
       assert(loop::IsSpatial(loop.spacetime_dimension));
       assert(loop.stride == 1);
 
-      if (i < spatial_split)
+      if (x_expansion * (loop.end - loop.start) <= arch_props_.FanoutX(storage_level_id)) // is x possible to expand
       {
         // X
         x_expansion *= (loop.end - loop.start);
         loop.spacetime_dimension = spacetime::Dimension::SpaceX;
       }
-      else
+      else if (y_expansion * (loop.end - loop.start) <= arch_props_.FanoutY(storage_level_id)) // is y possible to expand
       {
         // Y
         y_expansion *= (loop.end - loop.start);
         loop.spacetime_dimension = spacetime::Dimension::SpaceY;
+      }
+      else
+      {
+        success = false;
       }
     }
 
@@ -562,13 +566,13 @@ class Didi : public MapSpace
     
     // if (level_specs->SharingType() == model::DataSpaceIDSharing::Shared)
     // {
-    if (x_expansion > arch_props_.FanoutX(storage_level_id))
-      success = false;
+    // if (x_expansion > arch_props_.FanoutX(storage_level_id))
+    //   success = false;
       
-    if (y_expansion > arch_props_.FanoutY(storage_level_id))
-      success = false;
+    // if (y_expansion > arch_props_.FanoutY(storage_level_id))
+    //   success = false;
 
-    fanout_max = arch_props_.Fanout(storage_level_id);
+    // fanout_max = arch_props_.Fanout(storage_level_id);
     // }
     // else
     // {
@@ -602,7 +606,7 @@ class Didi : public MapSpace
     // Compute fanout utilization at this level.
     // Ignore bypass and partitioning. The only purpose of this is to accumulate
     // the level-wise utilizations to compute arithmetic utilization.
-    fanout_utilization *= double(x_expansion) * double(y_expansion) / fanout_max;
+    // fanout_utilization *= double(x_expansion) * double(y_expansion) / fanout_max;
 
     // if (!success)
     // {
@@ -617,7 +621,7 @@ class Didi : public MapSpace
     
     return success;
   }
-*/  
+ 
 
   //------------------------------------------//
   //   Manipulating Primitive representation  // 

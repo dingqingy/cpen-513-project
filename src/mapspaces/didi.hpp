@@ -562,7 +562,7 @@ class Didi : public MapSpace
       }
     }
 
-    std::size_t fanout_max;
+    // std::size_t fanout_max;
     
     // if (level_specs->SharingType() == model::DataSpaceIDSharing::Shared)
     // {

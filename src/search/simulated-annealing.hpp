@@ -75,7 +75,7 @@ class SimulatedAnnealing : public SearchAlgorithm
 
     //
     perm_.clear();
-    for(int i = 0; i <mapspace_->GetPrimitiveCount();i++)
+    for(unsigned i = 0; i <mapspace_->GetPrimitiveCount();i++)
       perm_.push_back(i);
   }
 

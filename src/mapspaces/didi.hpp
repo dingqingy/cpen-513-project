@@ -92,7 +92,10 @@ class Didi : public MapSpace
     for(unsigned i = 0; i < primitive_list_.size(); i++)
     {
     	// primitive_list_[i].Print()
-      std::cout << problem::GetShape()->DimensionIDToName.at(primitive_list_[i].first) << primitive_list_[i].second << " " << std::endl;
+      if(primitive_list_[i].first<problem::GetShape()->NumDimensions)
+        std::cout << problem::GetShape()->DimensionIDToName.at(primitive_list_[i].first) << primitive_list_[i].second << " " << std::endl;
+      else
+        std::cout << " || " << std::endl;
     }
     std::cout << std::endl;
 
@@ -100,7 +103,11 @@ class Didi : public MapSpace
     for(unsigned i = 0; i < proposed_.size(); i++)
     {
       // proposed_[i].Print()
-      std::cout << problem::GetShape()->DimensionIDToName.at(proposed_[i].first) << proposed_[i].second << " " << std::endl;
+      // std::cout << problem::GetShape()->DimensionIDToName.at(proposed_[i].first) << proposed_[i].second << " " << std::endl;
+      if(proposed_[i].first<problem::GetShape()->NumDimensions)
+        std::cout << problem::GetShape()->DimensionIDToName.at(proposed_[i].first) << proposed_[i].second << " " << std::endl;
+      else
+        std::cout << " || " << std::endl;
     }
     std::cout << std::endl;
   }

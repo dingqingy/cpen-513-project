@@ -29,6 +29,7 @@
 
 
 #include "mapspaces/uber.hpp"
+#include "mapspaces/didi.hpp"
 #include "workload/problem-shape.hpp"
 #include "compound-config/compound-config.hpp"
 

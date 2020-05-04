@@ -34,6 +34,7 @@
 #include "search/linear-pruned.hpp"
 #include "search/hybrid.hpp"
 #include "search/random-pruned.hpp"
+#include "search/simulated-annealing.hpp"
 #include "compound-config/compound-config.hpp"
 
 namespace search

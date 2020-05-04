@@ -38,7 +38,7 @@ class SimulatedAnnealing : public SearchAlgorithm
   double best_cost_; 
 
   uint128_t max_iter_;
-  unsigned early_stop_iter_;
+  // unsigned early_stop_iter_;
   unsigned cooling_iter_;
   double beta_;
 
@@ -69,7 +69,7 @@ class SimulatedAnnealing : public SearchAlgorithm
     // from config
     temp_ = 1000;
     max_iter_ = 1000000;
-    early_stop_iter_ = 10000;
+    // early_stop_iter_ = 10000;
     cooling_iter_ = 10;
     beta_ = 0.9;
 
@@ -137,6 +137,20 @@ class SimulatedAnnealing : public SearchAlgorithm
         // Done: swap that actually change the primitive_list from proposed_ in the Didi mapspace
         mapspace_->AcceptProposal();
         previous_cost_ = cost;
+      }
+
+      // if (cost < best_cost_)
+      // {
+      //   best_cost_ = cost;
+      //   early_stop = 0;
+      // }
+
+      best_cost_ = std::min(best_cost_, cost);
+
+      if((timestamp_+1) % cooling_iter_ == 0)
+      {
+        temp_ *= beta;
+        std::cout << "iter: " << timestamp_ <<" temp: " << temp_ << "best_cost_: "<< best_cost_ <<std::endl;
       }
 
       best_cost_ = std::min(best_cost_, cost);

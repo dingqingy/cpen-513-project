@@ -69,7 +69,7 @@ class Didi : public MapSpace
       MapSpace(arch_specs, workload),
       arch_props_(arch_specs),
       constraints_(arch_props_, workload),
-      rng_(rd_()),
+      rng_(rd_())
   {
     if (!skip_init)
     {

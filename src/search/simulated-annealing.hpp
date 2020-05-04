@@ -64,14 +64,25 @@ class SimulatedAnnealing : public SearchAlgorithm
       rng_(rd_()),
       dis_(std::uniform_real_distribution<>(0.0, 1.0))
   {
-    (void) config;
+    // (void) config;
     // TODO: get temp_, max_iter_, early_stop_iter_, cooling_iter_, beta_ (optionally)
     // from config
-    temp_ = 100000;
+    temp_ = 100000; // default
+    config.lookupValue("init-temp", temp_);
+
     max_iter_ = 1000000;
+    config.lookupValue("max-iter", max_iter_);
     // early_stop_iter_ = 10000;
     cooling_iter_ = 1000;
+    config.lookupValue("cooling-iter", cooling_iter_);
+
     beta_ = 0.9;
+    config.lookupValue("beta", beta_);
+
+    std::cout<< "Init T: " << temp_
+             << "Max Iter: " << max_iter_
+             << "Cooling Iter: " << cooling_iter_
+             << "Beta: " << beta_ << std::endl;
 
     //
     perm_.clear();

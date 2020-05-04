@@ -165,9 +165,6 @@ class Didi : public MapSpace
   {
     num_splits = 1;
 
-    uint128_t split_size = 1 + (size_[int(mapspace::Dimension::IndexFactorization)] - 1) / num_splits;
-    uint128_t split_residue = (split_size * num_splits) - size_[int(mapspace::Dimension::IndexFactorization)];
-
     std::cout << "No parallelization with SA, num_splits set to "<< num_splits << std::endl;
 
     std::vector<Didi*> splits;

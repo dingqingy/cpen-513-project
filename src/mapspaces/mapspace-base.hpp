@@ -110,6 +110,12 @@ class MapSpace
   {
     return size_;
   }
+
+  virtual void ProposeToSwap(unsigned p1, unsigned p2) = 0;
+  virtual void AcceptProposal() = 0;
+  virtual std::size_t GetPrimitiveCount() = 0;
+
+
 };
 
 } // namespace mapspace

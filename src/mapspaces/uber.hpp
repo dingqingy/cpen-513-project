@@ -848,6 +848,22 @@ class Uber : public MapSpace
     return datatype_bypass_nest_space_.at(int(mapping_datatype_bypass_id));
   }
 
+  // Hacky to get polymorphism working
+  void ProposeToSwap(unsigned p1, unsigned p2)
+  {
+    (void) p1;
+    (void) p2;
+  }
+
+  void AcceptProposal()
+  {
+  }
+
+  std::size_t GetPrimitiveCount()
+  {
+    return 0;
+  }
+
   //------------------------------------------//
   //                 Parsing                  // 
   //------------------------------------------//

@@ -32,12 +32,12 @@ class SimulatedAnnealing : public SearchAlgorithm
   std::uint64_t eval_fail_count_;
 
   // simulated annealing states
-  uint128_t timestamp_;
+  unsigned timestamp_;
   double temp_;
   double previous_cost_; // used to calculate delta
   double best_cost_; 
 
-  uint128_t max_iter_;
+  unsigned max_iter_;
   // unsigned early_stop_iter_;
   unsigned cooling_iter_;
   double beta_;

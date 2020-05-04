@@ -47,6 +47,9 @@ class SimulatedAnnealing : public SearchAlgorithm
   std::mt19937 rng_; //Standard mersenne_twister_engine seeded with rd()
   std::uniform_real_distribution<> dis_;
 
+  // Done: permutation list for proposing swap
+  std::vector<unsigned> perm_;
+
  public:
   SimulatedAnnealing(config::CompoundConfigNode config, mapspace::MapSpace* mapspace) :
       SearchAlgorithm(),
@@ -54,6 +57,7 @@ class SimulatedAnnealing : public SearchAlgorithm
       state_(State::Ready),
       timestamp_(0),
       previous_cost_(std::numeric_limits<double>::max()),
+      best_cost_(std::numeric_limits<double>::max()),
       beta_(0.9),
       rng_(rd_()),
       dis_(std::uniform_real_distribution<>(0.0, 1.0)),
@@ -68,10 +72,17 @@ class SimulatedAnnealing : public SearchAlgorithm
     early_stop_iter_ = 10000;
     cooling_iter_ = 10;
     beta_ = 0.9;
+
+    //
+    perm_.clear();
+    for(int i = 0; i <mapspace_->GetPrimitiveCount();i++)
+      perm_.push_back(i);
   }
 
-  // TODO: figure out when to propose swap, when to actually swap
+  // Done: figure out when to propose swap, when to actually swap
   // need to review mapper
+  // we manipulate in proposed list in Next
+  // take the actual swap in Report
 
   bool Next(mapspace::ID& mapping_id)
   {
@@ -94,7 +105,9 @@ class SimulatedAnnealing : public SearchAlgorithm
     //   mapping_id.Set(i, iterator_[i]);
     // }
 
-    // TODO: propose a new swap (not through new mapping ID but through update proposed_ in the Didi mapspace)
+    // Done: propose a new swap (not through new mapping ID but through update proposed_ in the Didi mapspace)
+    std::shuffle(std::begin(perm_), std::end(perm_), rng_);
+    mapspace_->ProposeToSwap(perm_.at(0), perm.at(1));
 
     // increase the timestamp similar to update in mapping_id
     timestamp_++;
@@ -121,14 +134,12 @@ class SimulatedAnnealing : public SearchAlgorithm
 
       if (r < std::exp(-d_cost / temp_))
       {
-        // TODO: swap that actually change the primitive_list from proposed_ in the Didi mapspace
+        // Done: swap that actually change the primitive_list from proposed_ in the Didi mapspace
+        mapspace_->AcceptProposal();
         previous_cost_ = cost;
       }
 
-      if (best_cost_ == 0)
-        best_cost_ = cost;
-      else
-        best_cost_ = std::min(best_cost_, cost);
+      best_cost_ = std::min(best_cost_, cost);
     }
     else if (status == Status::MappingConstructionFailure)
     {

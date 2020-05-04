@@ -109,12 +109,13 @@ class Didi : public MapSpace
   {
   	// Note: User factor should not be considered for swap only within the tiling level
   	// to simplify: assume no user factor (discard) first?
+    // TODO: fix it to allow user factor (maybe first allow spatial and then arbitrary constraints)
   	auto user_factors = constraints_.Factors();
     auto user_max_factors = constraints_.MaxFactors();
 
     assert(user_factors.size() <= arch_props_.TilingLevels());
 
-    // TODO: based on the workload, produce primitive_list in an arbitrary order
+    // Done: based on the workload, produce primitive_list in an arbitrary order
     // TODO: we can fix spatial level to reduce the complexity
 
     primitive_list_.clear();
@@ -143,13 +144,16 @@ class Didi : public MapSpace
 
       std::shuffle(std::begin(primitive_list_), std::end(primitive_list_), std::default_random_engine());
 
+      // TODO: add special premitives such as level seperators
+      // TODO: infer spatial primitives implicitly based on level seperator and IsSpatial(level)
+
       proposed_ = primitive_list_;
     }
   }
 
   Didi(const Didi& other) = default;
 
-  // TODO: Split should produce no effect in simulated anneadling 
+  // Done: Split should produce no effect in simulated anneadling 
   // Or in the mapper, disable split if use SA search
 
   std::vector<MapSpace*> Split(std::uint64_t num_splits)
@@ -159,7 +163,7 @@ class Didi : public MapSpace
     uint128_t split_size = 1 + (size_[int(mapspace::Dimension::IndexFactorization)] - 1) / num_splits;
     uint128_t split_residue = (split_size * num_splits) - size_[int(mapspace::Dimension::IndexFactorization)];
 
-    std::cout << "No parallelization with SA with num_splits set to "<< num_splits << std::endl;
+    std::cout << "No parallelization with SA, num_splits set to "<< num_splits << std::endl;
 
     std::vector<Uber*> splits;
     std::vector<MapSpace*> retval;
@@ -175,7 +179,7 @@ class Didi : public MapSpace
     return retval;
   }
 
-  // TODO: InitPruned should be disabled
+  // Done: InitPruned should be disabled
   void InitPruned(uint128_t index_factorization_id)
   {
   	(void) index_factorization_id;
@@ -261,7 +265,8 @@ class Didi : public MapSpace
 
     // Finalize mapping.
     // mapping->id = mapping_id.Integer();
-    // TODO: figure out timestamp increase, should happen in search or here?
+    // Done: figure out timestamp increase, should happen in search or here?
+    // we do it in search, here just use another timestamp_ to distinguish mapping
     mapspace->id = timestamp_;
     timestamp_++;
     return true;
@@ -347,6 +352,7 @@ class Didi : public MapSpace
   }
 
   // validate spatial fanout
+  // TODO: get spatial primitive to work properly
 /*
   //
   // Mapping Construction
@@ -489,6 +495,33 @@ class Didi : public MapSpace
     return success;
   }
 */  
+
+  //------------------------------------------//
+  //   Manipulating Primitive representation  // 
+  //------------------------------------------//
+
+  void ProposeToSwap(unsigned p1, unsigned p2)
+  {
+    // proposal is based on the true representation
+    proposed_ = primitive_list_;
+    std::swap(proposed_.at(p1), proposed_.at(p2));
+  }
+
+  void AcceptProposal()
+  {
+    // note if proposal not accepted, will not update primitive list
+    assert(primitive_list_.size() == proposed_.size());
+    primitive_list_ = proposed_;
+  }
+
+  std::size_t GetPrimitiveCount()
+  {
+    // use this to make sure proposed position within vector size
+    assert(primitive_list_.size() == proposed_.size());
+    return primitive_list_.size();
+  }
+
+
   //------------------------------------------//
   //                 Parsing                  // 
   //------------------------------------------//

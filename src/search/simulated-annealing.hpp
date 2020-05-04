@@ -149,7 +149,7 @@ class SimulatedAnnealing : public SearchAlgorithm
 
       if((timestamp_+1) % cooling_iter_ == 0)
       {
-        temp_ *= beta;
+        temp_ *= beta_;
         std::cout << "iter: " << timestamp_ <<" temp: " << temp_ << "best_cost_: "<< best_cost_ <<std::endl;
       }
 

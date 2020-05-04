@@ -56,8 +56,8 @@ class Didi : public MapSpace
   mapping::Constraints constraints_;
 
   // random nunber stuff
-  std::random_device rd_;  //Will be used to obtain a seed for the random number engine
-  std::mt19937 rng_;
+  // std::random_device rd_;  //Will be used to obtain a seed for the random number engine
+  // std::mt19937 rng_;
 
  public:
   Didi(
@@ -68,8 +68,7 @@ class Didi : public MapSpace
     bool skip_init = false) :
       MapSpace(arch_specs, workload),
       arch_props_(arch_specs),
-      constraints_(arch_props_, workload),
-      rng_(rd_())
+      constraints_(arch_props_, workload)
   {
     if (!skip_init)
     {
@@ -163,7 +162,11 @@ class Didi : public MapSpace
       primitive_list_.push_back(std::make_pair(problem::GetShape()->NumDimensions, 0)); // level seperator
     }    
 
-    std::shuffle(std::begin(primitive_list_), std::end(primitive_list_), rng_);
+    unsigned seed = std::chrono::system_clock::now()
+               .time_since_epoch()
+               .count();
+
+    std::shuffle(std::begin(primitive_list_), std::end(primitive_list_), std::default_random_engine(seed));
 
     std::cout <<"primitive_list_ size: "<<primitive_list_.size()<<std::endl;
 

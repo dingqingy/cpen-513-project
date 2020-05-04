@@ -170,7 +170,7 @@ class Didi : public MapSpace
 
     std::cout << "No parallelization with SA, num_splits set to "<< num_splits << std::endl;
 
-    std::vector<Uber*> splits;
+    std::vector<Didi*> splits;
     std::vector<MapSpace*> retval;
     for (unsigned i = 0; i < num_splits; i++)
     {

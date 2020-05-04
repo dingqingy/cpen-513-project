@@ -377,7 +377,8 @@ class Didi : public MapSpace
         subnests.at(level).push_back(loop);
       }
 
-      start = end + 1;
+      end++;
+      start = end;
     }
     // Done: missing handling for spatial level and no allocated temporal dim
     // Done: check how is tiling boundary expressed

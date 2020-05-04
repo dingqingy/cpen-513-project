@@ -312,7 +312,7 @@ class Didi : public MapSpace
       //   order_arbitrator.push_back(std::make_pair(0, 0));
 
       // merge primitives and determine the order
-      for(int i = start; i<end; ++i)
+      for(unsigned i = start; i<end; ++i)
       {
         dim = proposed_.at(i).first;
         val = proposed_.at(i).second;

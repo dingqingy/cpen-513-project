@@ -1,5 +1,5 @@
 # Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
 # are met:
@@ -11,7 +11,7 @@
 #  * Neither the name of NVIDIA CORPORATION nor the names of its
 #    contributors may be used to endorse or promote products derived
 #    from this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -36,24 +36,25 @@ import yaml
 
 # Output file names.
 out_prefix = "timeloop-mapper."
-log_file_name = out_prefix + "log";
-stats_file_name = out_prefix + "stats.txt";
-xml_file_name = out_prefix + "map+stats.xml";
-map_txt_file_name = out_prefix + "map.txt";
-map_cfg_file_name = out_prefix + "map.cfg";
-map_cpp_file_name = out_prefix + "map.cpp";
-output_file_names = [ log_file_name,
-                      stats_file_name,
-                      xml_file_name,
-                      map_txt_file_name,
-                      map_cfg_file_name,
-                      map_cpp_file_name ]
-
-def prod (l):
-    return functools.reduce(lambda x, y: x*y, l)
+log_file_name = out_prefix + "log"
+stats_file_name = out_prefix + "stats.txt"
+xml_file_name = out_prefix + "map+stats.xml"
+map_txt_file_name = out_prefix + "map.txt"
+map_cfg_file_name = out_prefix + "map.cfg"
+map_cpp_file_name = out_prefix + "map.cpp"
+output_file_names = [log_file_name,
+                     stats_file_name,
+                     xml_file_name,
+                     map_txt_file_name,
+                     map_cfg_file_name,
+                     map_cpp_file_name]
 
 
-def rewrite_workload_bounds(src, dst, workload_bounds):
+def prod(l):
+    return functools.reduce(lambda x, y: x * y, l)
+
+
+def rewrite_workload_bounds(src, dst, workload_bounds, t, cooling, max_iter, beta):
     w, h, c, n, k, s, r, wpad, hpad, wstride, hstride = workload_bounds
     q = int((w - s + 2 * wpad) / wstride) + 1
     p = int((h - r + 2 * hpad) / hstride) + 1
@@ -78,26 +79,30 @@ def rewrite_workload_bounds(src, dst, workload_bounds):
         if "cfg" in src:
             config = libconf.load(f)
         elif "yaml" in src:
-            config = yaml.load(f, Loader = yaml.SafeLoader)
+            config = yaml.load(f, Loader=yaml.SafeLoader)
 
     config['problem']['R'] = r
     config['problem']['S'] = s
     config['problem']['P'] = p
-    config['problem']['Q'] = q 
+    config['problem']['Q'] = q
     config['problem']['C'] = c
     config['problem']['K'] = k
-    config['problem']['N'] = n
+    config['problem']['N'] = 32
     config['problem']['Wstride'] = wstride
     config['problem']['Hstride'] = hstride
     config['problem']['Wdilation'] = 1
     config['problem']['Hdilation'] = 1
+
+    config['mapper']['init-temp'] = t
+    config['mapper']['max-iter'] = max_iter
+    config['mapper']['cooling-iter'] = cooling
+    config['mapper']['beta'] = beta
 
     with open(dst, "w") as f:
         if "cfg" in src:
             f.write(libconf.dumps(config))
         elif "yaml" in src:
             f.write(yaml.dump(config))
-
 
 
 def run_timeloop(dirname, configfile, logfile='timeloop.log', workload_bounds=None):
@@ -109,12 +114,13 @@ def run_timeloop(dirname, configfile, logfile='timeloop.log', workload_bounds=No
         subprocess.check_call(['cp', configfile, configfile_path])
 
     print('Running timeloop to get mapping')
+
     def stmt():
         with open(logfile_path, "w") as outfile:
             this_file_path = os.path.abspath(inspect.getfile(inspect.currentframe()))
             timeloop_executable_location = os.path.join(
-                    os.path.dirname(this_file_path), '..', 'build', 'timeloop-mapper')
-            status = subprocess.call([timeloop_executable_location, configfile_path], stdout = outfile, stderr = outfile)
+                os.path.dirname(this_file_path), '..', 'build', 'timeloop-mapper')
+            status = subprocess.call([timeloop_executable_location, configfile_path], stdout=outfile, stderr=outfile)
             if status != 0:
                 subprocess.check_call(['cat', logfile_path])
                 print('Did you remember to build timeloop and set up your environment properly?')
@@ -122,7 +128,7 @@ def run_timeloop(dirname, configfile, logfile='timeloop.log', workload_bounds=No
     t = timeit.Timer(stmt)
     time = t.timeit(1)
     print('Time to run timeloop = ', time)
-    
+
     # Move timeloop output files to the right directory
     for f in output_file_names:
         if os.path.exists(f):

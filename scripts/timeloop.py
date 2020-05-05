@@ -105,11 +105,11 @@ def rewrite_workload_bounds(src, dst, workload_bounds, t, cooling, max_iter, bet
             f.write(yaml.dump(config))
 
 
-def run_timeloop(dirname, configfile, logfile='timeloop.log', workload_bounds=None):
+def run_timeloop(dirname, configfile, logfile='timeloop.log', workload_bounds=None, t=1e3, cooling=10, max_iter=10, beta=0.8):
     configfile_path = os.path.join(dirname, os.path.basename(configfile))
     logfile_path = os.path.join(dirname, logfile)
     if workload_bounds:
-        rewrite_workload_bounds(configfile, configfile_path, workload_bounds)
+        rewrite_workload_bounds(configfile, configfile_path, workload_bounds, t, cooling, max_iter, beta)
     else:
         subprocess.check_call(['cp', configfile, configfile_path])
 
@@ -120,7 +120,7 @@ def run_timeloop(dirname, configfile, logfile='timeloop.log', workload_bounds=No
             this_file_path = os.path.abspath(inspect.getfile(inspect.currentframe()))
             timeloop_executable_location = os.path.join(
                 os.path.dirname(this_file_path), '..', 'build', 'timeloop-mapper')
-            status = subprocess.call([timeloop_executable_location, configfile_path], stdout=outfile, stderr=outfile)
+            status = subprocess.call([timeloop_executable_location, configfile_path, 'ERT.yaml'], stdout=outfile, stderr=outfile)
             if status != 0:
                 subprocess.check_call(['cat', logfile_path])
                 print('Did you remember to build timeloop and set up your environment properly?')

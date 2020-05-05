@@ -5,7 +5,7 @@ Optimizing CNNAccelerator Dataflow Using Simulated Annealing
 * [Report](Project_Report.pdf)
 
 ## Getting started
-Follow instruction in timeloop_setup.md, make sure to have all dependencies and other setup
+Follow instruction in [here](timeloop_setup.md), make sure to have all dependencies and other setup
 Run simulated annealing mapping search algorithm on an eyeriss like hardware on a VGG_conv_5_2 layer
 ```
 cd configs/mapper/

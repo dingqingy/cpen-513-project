@@ -67,7 +67,7 @@ for cooling in [10, 100]:
             for name in names:
                 problem = layers[name]
 
-                print("Preparing to run timeloop for layer", name)
+                print(f'Preparing to run timeloop for layer {name} at t {t} cooling {cooling} max iter {max_iter} beta {beta}')
 
                 dirname = f'run/{name}/{t}_{cooling}_{max_iter}_{beta}/'
                 subprocess.check_call(['mkdir', '-p', dirname])

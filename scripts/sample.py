@@ -72,6 +72,10 @@ for cooling in [10, 100]:
                 dirname = f'run/{name}/{t}_{cooling}_{max_iter}_{beta}/'
                 subprocess.check_call(['mkdir', '-p', dirname])
 
+                if os.path.isfile(dirname + 'timeloop-mapper.stats.txt'):
+                    print('The current sparse problem evaluated already, skip!')
+                    continue
+
                 timeloop.run_timeloop(dirname,
                                       configfile=config_abspath,
                                       workload_bounds=problem,

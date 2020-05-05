@@ -60,16 +60,20 @@ for name in names:
     edp[name] = sys.float_info.max
 
 # for t in [1e24]:  # [1e24, 1e12, 1e6, 1e3]
-t = 1e24
-for cooling in [10, 100]:
-    for max_iter in [1000]:
+parser = argparse.ArgumentParser(
+    description='timeloop with simulated annealing')
+parser.add_argument('--temp', default=1e24, type=float, help='init temporature')
+args = parser.parse_args()
+# t = 1e24
+for cooling in [10, 20]:
+    for max_iter in [200]:
         for beta in [0.8, 0.9]:
             for name in names:
                 problem = layers[name]
 
-                print("Preparing to run timeloop for layer", name)
+                print(f'Preparing to run timeloop for layer {name} at t {args.temp} cooling {cooling} max iter {max_iter} beta {beta}')
 
-                dirname = f'run/{name}/{t}_{cooling}_{max_iter}_{beta}/'
+                dirname = f'run/{name}/{args.temp}_{cooling}_{max_iter}_{beta}/'
                 subprocess.check_call(['mkdir', '-p', dirname])
 
                 if os.path.isfile(dirname + 'timeloop-mapper.stats.txt'):
@@ -79,7 +83,7 @@ for cooling in [10, 100]:
                 timeloop.run_timeloop(dirname,
                                       configfile=config_abspath,
                                       workload_bounds=problem,
-                                      t=t,
+                                      t=args.temp,
                                       cooling=cooling,
                                       max_iter=max_iter,
                                       beta=beta)
@@ -99,8 +103,8 @@ for cooling in [10, 100]:
 
             # print("DONE.")
 
-with open(f'edp_{t}.json', 'w') as f:
+with open(f'edp_{args.temp}.json', 'w') as f:
     json.dump(edp, f)
 
-with open(f'result_{t}.json', 'w') as f:
+with open(f'result_{args.temp}.json', 'w') as f:
     json.dump(result, f)

@@ -2,7 +2,7 @@
 Optimizing CNNAccelerator Dataflow Using Simulated Annealing
 
 ## Report
-* [Report](project_report.pdf)
+* [Report](Project_Report.pdf)
 
 ## Getting started
 Follow instruction in timeloop_setup.md, make sure to have all dependencies and other setup
